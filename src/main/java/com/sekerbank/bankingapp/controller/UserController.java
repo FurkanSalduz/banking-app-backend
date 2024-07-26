@@ -2,7 +2,6 @@ package com.sekerbank.bankingapp.controller;
 
 import com.sekerbank.bankingapp.model.User;
 import com.sekerbank.bankingapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +13,14 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
 
-    @GetMapping
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/GetAllUser")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
@@ -28,7 +31,7 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/CreateUser")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
@@ -39,10 +42,10 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/login")
-    public User loginUser(@PathVariable String username,String password) {
-        return userService.authenticateUser(username,password);
+    @PostMapping("/authenticate")
+    public ResponseEntity<User> authenticateUser(@RequestParam String username, @RequestParam String password) {
+        return userService.authenticateUser(username, password);
     }
+
 
 }

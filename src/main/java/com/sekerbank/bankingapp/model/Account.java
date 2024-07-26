@@ -1,15 +1,13 @@
 package com.sekerbank.bankingapp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
+@Table(name = "accounts") // Tablo ismini burada belirtiyoruz
 @Data
+
 public class Account {
 
     @Id
@@ -17,20 +15,26 @@ public class Account {
     private Long id;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false ,unique = true)
     private String accountNumber;
 
     @NotNull
     @Column(nullable = false)
-    private String accountType;
+    private String accountType;  // Örneğin vadeli vadesiz
 
     @NotNull
     @Column(nullable = false)
     private Double balance;
 
-    @NotNull
-    @Column(nullable = false)
-    private Long userId; // Kullanıcı ID'si alanı
+    // Kullanıcı ID'si alanı
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
+
+
+
+
 
     // Lombok'un @Data anotasyonu tüm getter ve setter metodlarını sağlar,
     // bu yüzden manuel olarak getter ve setter metodları eklemeye gerek yoktur.

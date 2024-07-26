@@ -1,8 +1,9 @@
 package com.sekerbank.bankingapp.controller;
 
+import com.sekerbank.bankingapp.Dto.TransactionRequest;
 import com.sekerbank.bankingapp.model.Transaction;
 import com.sekerbank.bankingapp.service.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,26 +14,30 @@ import java.util.Optional;
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
-    @Autowired
-    private TransactionService transactionService;
 
-    @GetMapping
+    private final TransactionService transactionService;
+
+    public TransactionController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
+
+    @GetMapping("/GetAllTransactions")
     public List<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/GetById{id}")
     public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
         Optional<Transaction> transaction = transactionService.getTransactionById(id);
         return transaction.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public Transaction createTransaction(@RequestBody Transaction transaction) {
-        return transactionService.saveTransaction(transaction);
+    @PostMapping("/CreateTransaction")
+    public ResponseEntity<String> createTransaction(@Valid @RequestBody TransactionRequest transactionRequest) {
+        return transactionService.saveTransaction(transactionRequest);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/Delete/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id);
         return ResponseEntity.noContent().build();

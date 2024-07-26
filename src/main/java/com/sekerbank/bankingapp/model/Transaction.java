@@ -7,6 +7,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "transactions") // Tablo ismini burada belirtiyoruz
 @Data
 public class Transaction {
 
@@ -15,19 +16,23 @@ public class Transaction {
     private Long id;
 
     @NotNull(message = "Boş değer olamaz")
-    private Double amount;
+    private Double wallet;
 
     private String description;
 
     @NotNull(message = "Boş değer olamaz")
-    private String type; // Örneğin, "DEPOSIT", "WITHDRAWAL" gibi
+    private String account_type; //
 
     @NotNull(message = "Boş değer olamaz")
     private LocalDateTime timestamp;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id")  //hesap tablosu ile ilişkilendirildi
     private Account account;
 
+    @ManyToOne
+    @JoinColumn(name = "to_account_id")
+    private Account to_account;
     // Getters and setters
+
 }

@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -24,11 +23,16 @@ public class AccountController {
         return accountService.getAllAccounts();
     }
 
-    @GetMapping("/GetById{id}")
-    public ResponseEntity<Account> getAccountById(@PathVariable Long id) {
-        Optional<Account> account = accountService.getAccountById(id);
-        return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/byUserId/{userId}")
+    public ResponseEntity<List<Account>> getAccountsByUserId(@PathVariable Long userId) {
+        List<Account> accounts = accountService.getAccountsByUserId(userId);
+        if (accounts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(accounts);
     }
+
+
 
     @PostMapping("/CreateAccount")
     public Account createAccount(@RequestBody Account account) {

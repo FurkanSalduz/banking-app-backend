@@ -40,29 +40,17 @@ public class TransactionService {
         Account account = accountRepository.findById(transactionRequest.getAccountId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        Account toAccount = transactionRequest.getToAccountId() != null ?
-                accountRepository.findById(transactionRequest.getToAccountId())
-                        .orElseThrow(() -> new RuntimeException("Target account not found")) : null;
-
-        // Hesaplar null kontrolü
-        if (account == null || (toAccount == null && transactionRequest.getToAccountId() != null)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid account information");
-        }
-
-        // Bakiyeleri ve cüzdanı Double olarak ele alın
-        Double accountBalance = account.getBalance();
-        Double walletAmount = transactionRequest.getWallet();
+        Account toAccount = accountRepository.findByAccountNumber(transactionRequest.getToAccountNumber())
+                .orElseThrow(() -> new RuntimeException("Target account not found"));
 
         // Yetersiz bakiye kontrolü
-        if (accountBalance < walletAmount) {
+        if (account.getBalance() < transactionRequest.getWallet()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insufficient balance");
         }
 
         // Hesap bakiyelerini güncelle
-        account.setBalance(accountBalance - walletAmount);
-        if (toAccount != null) {
-            toAccount.setBalance(toAccount.getBalance() + walletAmount);
-        }
+        account.setBalance(account.getBalance() - transactionRequest.getWallet());
+        toAccount.setBalance(toAccount.getBalance() + transactionRequest.getWallet());
 
         // İşlemi kaydet
         transaction.setAccount(account);
@@ -71,13 +59,10 @@ public class TransactionService {
 
         // Hesapları güncelle
         accountRepository.save(account);
-        if (toAccount != null) {
-            accountRepository.save(toAccount);
-        }
+        accountRepository.save(toAccount);
 
         return ResponseEntity.ok("Transaction successfully completed");
     }
-
 
     public void deleteTransaction(Long id) {
         transactionRepository.deleteById(id);

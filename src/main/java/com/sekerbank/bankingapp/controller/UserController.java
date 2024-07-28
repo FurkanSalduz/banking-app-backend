@@ -1,5 +1,6 @@
 package com.sekerbank.bankingapp.controller;
 
+import com.sekerbank.bankingapp.Dto.LoginRequest;
 import com.sekerbank.bankingapp.model.User;
 import com.sekerbank.bankingapp.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -42,10 +43,13 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-    @PostMapping("/authenticate")
-    public ResponseEntity<User> authenticateUser(@RequestParam String username, @RequestParam String password) {
+    /* @PostMapping("/authenticate")
+    public ResponseEntity<User> authenticateUser(@RequestBody String username, @RequestBody String password) {
         return userService.authenticateUser(username, password);
+    } */
+    @PostMapping("/authenticate")
+    public ResponseEntity<User> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        return userService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
     }
-
 
 }

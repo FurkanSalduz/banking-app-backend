@@ -13,7 +13,7 @@ public class TransactionRequest {
     private String description;
 
     @NotNull(message = "Account type cannot be null")
-    private String account_type; // account type
+    private String account_type;
 
     @NotNull(message = "Timestamp cannot be null")
     private LocalDateTime timestamp;
@@ -21,6 +21,6 @@ public class TransactionRequest {
     @NotNull(message = "Account ID cannot be null")
     private Long accountId;
 
-    private Long toAccountId; // Optional, as not all transactions require a destination account
-
+    @NotNull(message = "Target account number cannot be null")
+    private String toAccountNumber;
 }

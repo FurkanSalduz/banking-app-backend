@@ -13,14 +13,13 @@ public interface TransactionMapper {
 
     @Mappings({
             @Mapping(source = "accountId", target = "account.id"),
-            @Mapping(source = "toAccountId", target = "to_account.id")
+            @Mapping(source = "toAccountNumber", target = "to_account.accountNumber")
     })
     Transaction toEntity(TransactionRequest transactionRequest);
 
-    // Eğer DTO'yu Transaction entity'sinden dönüştürmek isterseniz
     @Mappings({
             @Mapping(source = "account.id", target = "accountId"),
-            @Mapping(source = "to_account.id", target = "toAccountId")
+            @Mapping(source = "to_account.accountNumber", target = "toAccountNumber")
     })
     TransactionRequest toDto(Transaction transaction);
 }

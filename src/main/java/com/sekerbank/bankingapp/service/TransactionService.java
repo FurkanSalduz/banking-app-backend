@@ -36,6 +36,11 @@ public class TransactionService {
         // DTO'yu Entity'ye dönüştür
         Transaction transaction = TransactionMapper.INSTANCE.toEntity(transactionRequest);
 
+        // Miktarın sıfırdan büyük olduğunu kontrol et
+        if (transactionRequest.getWallet() <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Miktar sıfırdan büyük olmalıdır.");
+        }
+
         // Hesapları alın
         Account account = accountRepository.findById(transactionRequest.getAccountId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -45,7 +50,7 @@ public class TransactionService {
 
         // Yetersiz bakiye kontrolü
         if (account.getBalance() < transactionRequest.getWallet()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insufficient balance");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("\n" + "Yetersiz bakiye");
         }
 
         // Hesap bakiyelerini güncelle
